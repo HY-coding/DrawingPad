@@ -8,18 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		BD342E5F2695F83C004F113D /* DrawingPadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E5E2695F83C004F113D /* DrawingPadApp.swift */; };
-		BD342E612695F83C004F113D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E602695F83C004F113D /* ContentView.swift */; };
 		BD342E632695F840004F113D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD342E622695F840004F113D /* Assets.xcassets */; };
 		BD342E662695F840004F113D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD342E652695F840004F113D /* Preview Assets.xcassets */; };
+		BD342E732695F87C004F113D /* DrawingMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E6D2695F87B004F113D /* DrawingMenuView.swift */; };
+		BD342E742695F87C004F113D /* PhotoLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E6E2695F87B004F113D /* PhotoLibrary.swift */; };
+		BD342E752695F87C004F113D /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E6F2695F87C004F113D /* UtilityExtensions.swift */; };
+		BD342E762695F87C004F113D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E702695F87C004F113D /* ContentView.swift */; };
+		BD342E772695F87C004F113D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E712695F87C004F113D /* Camera.swift */; };
+		BD342E782695F87C004F113D /* DrawingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E722695F87C004F113D /* DrawingData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		BD342E5B2695F83C004F113D /* DrawingPad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DrawingPad.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD342E5E2695F83C004F113D /* DrawingPadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingPadApp.swift; sourceTree = "<group>"; };
-		BD342E602695F83C004F113D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BD342E622695F840004F113D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD342E652695F840004F113D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BD342E672695F840004F113D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BD342E6D2695F87B004F113D /* DrawingMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingMenuView.swift; sourceTree = "<group>"; };
+		BD342E6E2695F87B004F113D /* PhotoLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoLibrary.swift; sourceTree = "<group>"; };
+		BD342E6F2695F87C004F113D /* UtilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityExtensions.swift; sourceTree = "<group>"; };
+		BD342E702695F87C004F113D /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BD342E712695F87C004F113D /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		BD342E722695F87C004F113D /* DrawingData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +63,12 @@
 			isa = PBXGroup;
 			children = (
 				BD342E5E2695F83C004F113D /* DrawingPadApp.swift */,
-				BD342E602695F83C004F113D /* ContentView.swift */,
+				BD342E712695F87C004F113D /* Camera.swift */,
+				BD342E702695F87C004F113D /* ContentView.swift */,
+				BD342E722695F87C004F113D /* DrawingData.swift */,
+				BD342E6D2695F87B004F113D /* DrawingMenuView.swift */,
+				BD342E6E2695F87B004F113D /* PhotoLibrary.swift */,
+				BD342E6F2695F87C004F113D /* UtilityExtensions.swift */,
 				BD342E622695F840004F113D /* Assets.xcassets */,
 				BD342E672695F840004F113D /* Info.plist */,
 				BD342E642695F840004F113D /* Preview Content */,
@@ -138,7 +153,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD342E612695F83C004F113D /* ContentView.swift in Sources */,
+				BD342E732695F87C004F113D /* DrawingMenuView.swift in Sources */,
+				BD342E762695F87C004F113D /* ContentView.swift in Sources */,
+				BD342E782695F87C004F113D /* DrawingData.swift in Sources */,
+				BD342E772695F87C004F113D /* Camera.swift in Sources */,
+				BD342E742695F87C004F113D /* PhotoLibrary.swift in Sources */,
+				BD342E752695F87C004F113D /* UtilityExtensions.swift in Sources */,
 				BD342E5F2695F83C004F113D /* DrawingPadApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
