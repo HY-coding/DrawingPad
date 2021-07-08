@@ -11,12 +11,12 @@ import SwiftUI
     
 struct DrawingMenuView : View {
     
-    @ObservedObject var drawingVM : DrawingVM
+    @EnvironmentObject var drawingVM : DrawingVM
     
     var penColorItems : some View {
         Group {
             Button {
-                drawingVM.selectedColor = .black
+                drawingVM.changePenColor(.black)
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.black)
@@ -24,7 +24,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*6))
             
             Button {
-                drawingVM.selectedColor = .blue
+                drawingVM.changePenColor(.blue)
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.blue)
@@ -32,7 +32,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*5))
             
             Button {
-                drawingVM.selectedColor = .green
+                drawingVM.changePenColor(.green)
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.green)
@@ -40,7 +40,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*4))
             
             Button {
-                drawingVM.selectedColor = .yellow
+                drawingVM.changePenColor(.yellow)
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.yellow)
@@ -48,7 +48,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*3))
             
             Button {
-                drawingVM.selectedColor = .red
+                drawingVM.changePenColor(.red)
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.red)
@@ -56,7 +56,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*2))
             //clean button
             Button {
-                drawingVM.selectedColor = .white
+                drawingVM.changePenColor(.white)
             } label : {
                 Image(systemName: "circle" )
                     .foregroundColor(.black)
@@ -69,7 +69,7 @@ struct DrawingMenuView : View {
         Group {
             Button {
                 // pen size 1
-                drawingVM.selectedSize = Consts.penSize1
+                drawingVM.changePenWidth(Consts.penSize1)
             } label : {
                 ZStack {
                     Image(systemName: "circle.fill")
@@ -84,7 +84,7 @@ struct DrawingMenuView : View {
             
             Button {
                 // pen size 2
-                drawingVM.selectedSize = Consts.penSize2
+                drawingVM.changePenWidth(Consts.penSize2)
             } label : {
                 ZStack {
                     Image(systemName: "circle.fill")
@@ -99,7 +99,7 @@ struct DrawingMenuView : View {
             
             Button {
                 // pen size 3
-                drawingVM.selectedSize = Consts.penSize3
+                drawingVM.changePenWidth(Consts.penSize3)
             } label : {
                 ZStack {
                     Image(systemName: "circle.fill")
@@ -117,7 +117,7 @@ struct DrawingMenuView : View {
     var penGroup : some View {
         ZStack {
             
-            if drawingVM.penExpanded {
+            if drawingVM.showPenMenu {
                 penColorItems
                 penSizeItems
             }
@@ -125,8 +125,8 @@ struct DrawingMenuView : View {
             
             Button {
                 withAnimation{
-                    drawingVM.penExpanded.toggle()
-                    drawingVM.settingExpanded = false
+                    drawingVM.showPenMenu.toggle()
+                    drawingVM.showSettingMenu = false
                 }
             } label : {
                 
@@ -144,7 +144,7 @@ struct DrawingMenuView : View {
             .clipShape(Circle())
             .padding()
         }
-        .animation(drawingVM.penExpanded ? .spring(dampingFraction: 0.7) : .easeInOut)
+        .animation(drawingVM.showPenMenu ? .spring(dampingFraction: 0.7) : .easeInOut)
         
         
     }
@@ -153,6 +153,7 @@ struct DrawingMenuView : View {
     var undo : some View {
         Button {
             drawingVM.drawingEvent = .undo
+            drawingVM.undo()
         } label : {
             Image(systemName: "arrow.uturn.left")
         }
@@ -164,6 +165,7 @@ struct DrawingMenuView : View {
     var redo : some View {
         Button {
             drawingVM.drawingEvent = .redo
+            drawingVM.redo()
         } label : {
             Image(systemName: "arrow.uturn.right")
         }
@@ -175,6 +177,7 @@ struct DrawingMenuView : View {
         Button {
             print("trash")
             drawingVM.drawingEvent = .clean
+            drawingVM.cleanDrawing()
         } label : {
             Image(systemName: "trash")
         }
@@ -186,7 +189,7 @@ struct DrawingMenuView : View {
     
     var settingGroup : some View {
         ZStack {
-            if drawingVM.settingExpanded {
+            if drawingVM.showSettingMenu {
                 
                 Button { } label : {
                     Image(systemName: "info.circle")
@@ -195,6 +198,7 @@ struct DrawingMenuView : View {
                 
                 Button {
                     drawingVM.drawingEvent = .share
+                    drawingVM.showShareSheet()
                 } label : {
                     Image(systemName: "square.and.arrow.up")
                 }
@@ -202,6 +206,7 @@ struct DrawingMenuView : View {
                 
                 Button {
                     drawingVM.drawingEvent = .saveToAlbum
+                    drawingVM.saveImageOnCanvas()
                 } label : {
                     Image(systemName: "arrow.down.to.line")
                 }
@@ -209,7 +214,7 @@ struct DrawingMenuView : View {
                 
                 Button {
                     drawingVM.drawingEvent = .camera
-                    drawingVM.showSheet = true
+                    drawingVM.showBackgroundImagePickerSheet = true
                 } label : {
                     Image(systemName: "camera")
                 }
@@ -217,7 +222,7 @@ struct DrawingMenuView : View {
                 
                 Button {
                     drawingVM.drawingEvent = .photo
-                    drawingVM.showSheet = true
+                    drawingVM.showBackgroundImagePickerSheet = true
                 } label : {
                     Image(systemName: "photo")
                 }
@@ -228,8 +233,8 @@ struct DrawingMenuView : View {
             Button {
                 
                 withAnimation {
-                    drawingVM.settingExpanded.toggle()
-                    drawingVM.penExpanded = false
+                    drawingVM.showSettingMenu.toggle()
+                    drawingVM.showPenMenu = false
                 }
                 
             } label : {
@@ -241,7 +246,7 @@ struct DrawingMenuView : View {
             
             
         }
-        .animation(drawingVM.settingExpanded ? .spring(dampingFraction: 0.7) : .easeOut)
+        .animation(drawingVM.showSettingMenu ? .spring(dampingFraction: 0.7) : .easeOut)
         
     }
     
@@ -251,7 +256,7 @@ struct DrawingMenuView : View {
             
             penGroup
             Spacer()
-            if !drawingVM.penExpanded {
+            if !drawingVM.showPenMenu {
                 Group {
                     undo
                     Spacer()
@@ -268,6 +273,7 @@ struct DrawingMenuView : View {
         .onTapGesture {
             print("menu tapped")
         }
+        
         //.background(Color.purple)
         //.shadow(color: .black, radius: 3, x: 3, y: 3)
         //        .cornerRadius(25)

@@ -9,11 +9,12 @@ import SwiftUI
 
 @main
 struct DrawingPadApp: App {
-    private let drawingVM = DrawingVM()
+    @StateObject var drawingVM = DrawingVM()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(drawingVM: drawingVM)
+            ContentView()
+                .environmentObject(drawingVM)
         }
     }
 }

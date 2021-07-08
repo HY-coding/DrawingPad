@@ -48,24 +48,23 @@ class DrawingVM: ObservableObject {
     }
     @Published var redoStrokes = [PKStroke]()
     @Published var imageData: Data = Data(count: 0)
+    @Published var canvasSize = CGSize.zero
     
     
-    @Published var penExpanded = false
-    @Published var settingExpanded = false
-    @Published var showAlert = false
-    @Published var showSheet = false
+    @Published var showPenMenu = false
+    @Published var showSettingMenu = false
+    @Published var showSaveImageDoneAlert = false
+    @Published var showBackgroundImagePickerSheet = false
     
     @Published var selectedColor = Consts.defaultColor {
         didSet {
             drawingEvent = .colorChanged
-//            collapseMenu()
         }
     }
     
     @Published var selectedSize = Consts.penSize2 {
         didSet {
             drawingEvent = .penSizeChanged
-//            collapseMenu()
         }
     }
      
@@ -74,25 +73,113 @@ class DrawingVM: ObservableObject {
         
     }
     
-    
     func collapseMenu() {
-        self.penExpanded = false
-        self.settingExpanded = false
+        self.showPenMenu = false
+        self.showSettingMenu = false
     }
     
     
-    func saveImageOnCanvas(_ canvas: PKCanvasView, size: CGSize){
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        canvas.drawHierarchy(in: CGRect(origin: .zero, size: size), afterScreenUpdates: true)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+}
+
+// functions
+extension DrawingVM {
+    
+    func removeBackgroundImage() {
+        if let viewWithTag = canvas.subviews[0].viewWithTag(Consts.backgroundImageTag) {
+            print("found viewWithTag")
+            viewWithTag.removeFromSuperview()
+        }
+    }
+    
+    
+    func cleanDrawing(){
+        canvas.drawing.strokes.removeAll()
+        redoStrokes.removeAll()
+        imageData.removeAll()
+        removeBackgroundImage()
+    }
         
-        if let image = image {
+    
+    func undo(){
+        if canvas.drawing.strokes.count > 0 {
+            redoStrokes.append(canvas.drawing.strokes.last!)
+            canvas.drawing.strokes.removeLast()
+        }
+    }
+    
+    func redo(){
+        if redoStrokes.count > 0 {
+            canvas.drawing.strokes.append(redoStrokes.last!)
+            redoStrokes.removeLast()
+        }
+        print("\(redoStrokes)")
+    }
+    
+    
+    
+        
+    func changePenColor(_ color:Color) {
+        selectedColor = color
+        canvas.tool = PKInkingTool(.pen, color: UIColor(selectedColor), width: selectedSize)
+    }
+    func changePenWidth(_ width:CGFloat){
+        selectedSize = width
+        canvas.tool = PKInkingTool(.pen, color: UIColor(selectedColor), width: selectedSize)
+    }
+    
+    
+    func handlePickerBackgroundImage(_ image: UIImage?) {
+        print("handlePickerBackgroundImage")
+        
+        if let imageData = image?.jpegData(compressionQuality: 1){
+            print("imageData \(imageData)")
+            
+            //imageData = imageData
+            
+            removeBackgroundImage()
+            
+            if let image = UIImage(data: imageData) {
+                
+                let imageView = UIImageView(image: image)
+                imageView.frame = CGRect(x: 0, y: 0, width: canvasSize.width, height: canvasSize.height)
+                imageView.contentMode   = .scaleAspectFit
+                imageView.clipsToBounds = true
+                imageView.tag = Consts.backgroundImageTag
+                
+                let subView = canvas.subviews[0]
+                subView.addSubview(imageView)
+                subView.sendSubviewToBack(imageView)
+            }
+            
+            
+        }
+    }
+    
+    
+    func showShareSheet(){
+        
+        if let image = exportDrawingToUIimage() {
+            let activityItems = [image]
+            let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+            UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
+        }
+    }
+    
+    
+    func saveImageOnCanvas(){
+        if let image = exportDrawingToUIimage() {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
             print("Save ok!")
-            showAlert = true
+            showSaveImageDoneAlert = true
         }
-        
+    }
+    
+    private func exportDrawingToUIimage()->UIImage? {
+        UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0)
+        canvas.drawHierarchy(in: CGRect(origin: .zero, size: canvasSize), afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
     }
     
 }
