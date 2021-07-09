@@ -185,6 +185,23 @@ struct DrawingMenuView : View {
         .padding()
     }
     
+    var locker : some View {
+        Button {
+            print("lock")
+            drawingVM.canvas.isUserInteractionEnabled.toggle()
+        } label : {
+            if !drawingVM.canvas.isUserInteractionEnabled {
+                Image(systemName: "lock")
+                    .font(.system(size: Consts.iconFontSize))
+            }else {
+                Image(systemName: "lock.open")
+                    .font(.system(size: Consts.iconFontSize))
+            }
+        }
+        .font(Font.system(size: Consts.iconFontSize))
+        .padding()
+    }
+    
     
     
     var settingGroup : some View {
@@ -264,6 +281,8 @@ struct DrawingMenuView : View {
                     Spacer()
                     clean
                     Spacer()
+                    //locker
+                    //Spacer()
                     settingGroup
                 }
                 .animation(.easeInOut)

@@ -16,7 +16,15 @@ struct ContentView: View {
         VStack {
             GeometryReader { geometry in
                 VStack{
-                    CanvasView(canvas: $drawingVM.canvas)
+                    ZStack {
+
+                        CanvasView(canvas: $drawingVM.canvas)
+                            .onTapGesture {
+                                print("onTapGesture")
+                                drawingVM.collapseMenu()
+                            }
+                            
+                    }
                 }
                 .onAppear(){
                     print("onAppear")
@@ -63,15 +71,20 @@ struct CanvasView : UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         print("makeUIView")
+//        canvas.overrideUserInterfaceStyle = .dark
         canvas.drawingPolicy = .anyInput
         canvas.tool = PKInkingTool(.pen, color: UIColor(drawingVM.selectedColor), width: drawingVM.selectedSize)
-        //canvas.backgroundColor = .white
+        canvas.backgroundColor = .clear
         canvas.isOpaque = false
-        canvas.delegate = context.coordinator
         
+        canvas.delegate = context.coordinator
+        //canvas.isDirectionalLockEnabled = false
+        //canvas.isScrollEnabled = true
+        
+        canvas.drawingGestureRecognizer.isEnabled = false
         //toolPicker.setVisible(true, forFirstResponder: canvas)
         //toolPicker.addObserver(canvas)
-        //canvas.becomeFirstResponder()
+        canvas.becomeFirstResponder()
         
         return canvas
     }
@@ -79,6 +92,7 @@ struct CanvasView : UIViewRepresentable {
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         print("updateUIView")
+        
     }
     
     func onSaved() {
@@ -87,7 +101,6 @@ struct CanvasView : UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-      //Coordinator(canvas: $canvas, onSaved: onSaved)
         Coordinator(canvas: $drawingVM.canvas, onSaved: onSaved)
         
     }

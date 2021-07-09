@@ -15,7 +15,7 @@
 		BD342E752695F87C004F113D /* UtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E6F2695F87C004F113D /* UtilityExtensions.swift */; };
 		BD342E762695F87C004F113D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E702695F87C004F113D /* ContentView.swift */; };
 		BD342E772695F87C004F113D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E712695F87C004F113D /* Camera.swift */; };
-		BD342E782695F87C004F113D /* DrawingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E722695F87C004F113D /* DrawingData.swift */; };
+		BD342E782695F87C004F113D /* DrawingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD342E722695F87C004F113D /* DrawingVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +29,7 @@
 		BD342E6F2695F87C004F113D /* UtilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityExtensions.swift; sourceTree = "<group>"; };
 		BD342E702695F87C004F113D /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BD342E712695F87C004F113D /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
-		BD342E722695F87C004F113D /* DrawingData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingData.swift; sourceTree = "<group>"; };
+		BD342E722695F87C004F113D /* DrawingVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingVM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,11 +63,11 @@
 			isa = PBXGroup;
 			children = (
 				BD342E5E2695F83C004F113D /* DrawingPadApp.swift */,
-				BD342E712695F87C004F113D /* Camera.swift */,
 				BD342E702695F87C004F113D /* ContentView.swift */,
 				BD342E6D2695F87B004F113D /* DrawingMenuView.swift */,
-				BD342E722695F87C004F113D /* DrawingData.swift */,
+				BD342E722695F87C004F113D /* DrawingVM.swift */,
 				BD342E6E2695F87B004F113D /* PhotoLibrary.swift */,
+				BD342E712695F87C004F113D /* Camera.swift */,
 				BD342E6F2695F87C004F113D /* UtilityExtensions.swift */,
 				BD342E622695F840004F113D /* Assets.xcassets */,
 				BD342E672695F840004F113D /* Info.plist */,
@@ -155,7 +155,7 @@
 			files = (
 				BD342E732695F87C004F113D /* DrawingMenuView.swift in Sources */,
 				BD342E762695F87C004F113D /* ContentView.swift in Sources */,
-				BD342E782695F87C004F113D /* DrawingData.swift in Sources */,
+				BD342E782695F87C004F113D /* DrawingVM.swift in Sources */,
 				BD342E772695F87C004F113D /* Camera.swift in Sources */,
 				BD342E742695F87C004F113D /* PhotoLibrary.swift in Sources */,
 				BD342E752695F87C004F113D /* UtilityExtensions.swift in Sources */,

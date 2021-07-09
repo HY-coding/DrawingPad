@@ -37,45 +37,74 @@ class DrawingVM: ObservableObject {
         case photo
         case saveToAlbum
         case share
+        case lock
+        case unlock
     }
 
     
     @Published var canvas = PKCanvasView()
-    @Published var drawingEvent:Event = .idle {
-        didSet {
-            collapseMenu()
-        }
-    }
+    @Published var drawingEvent:Event = .idle
     @Published var redoStrokes = [PKStroke]()
     @Published var imageData: Data = Data(count: 0)
     @Published var canvasSize = CGSize.zero
     
     
-    @Published var showPenMenu = false
-    @Published var showSettingMenu = false
-    @Published var showSaveImageDoneAlert = false
-    @Published var showBackgroundImagePickerSheet = false
+    @Published var showPenMenu = false {
+        didSet {
+            if showPenMenu == true {
+                canvas.isUserInteractionEnabled = false
+            }
+            if !showPenMenu && !showSettingMenu {
+                canvas.isUserInteractionEnabled = true
+            }
+        }
+    }
+    
+    @Published var showSettingMenu = false {
+        didSet {
+            if showSettingMenu == true {
+                canvas.isUserInteractionEnabled = false
+            }
+            if !showPenMenu && !showSettingMenu {
+                canvas.isUserInteractionEnabled = true
+            }
+        }
+    }
+    
+    @Published var showSaveImageDoneAlert = false {
+        didSet {
+            collapseMenu()
+        }
+    }
+    
+    @Published var showBackgroundImagePickerSheet = false {
+        didSet {
+            collapseMenu()
+        }
+    }
     
     @Published var selectedColor = Consts.defaultColor {
         didSet {
-            drawingEvent = .colorChanged
+            collapseMenu()
         }
     }
     
     @Published var selectedSize = Consts.penSize2 {
         didSet {
-            drawingEvent = .penSizeChanged
+            collapseMenu()
         }
     }
      
 
     init(){
         
+        
     }
     
     func collapseMenu() {
         self.showPenMenu = false
         self.showSettingMenu = false
+        self.canvas.isUserInteractionEnabled = true
     }
     
     
@@ -97,6 +126,7 @@ extension DrawingVM {
         redoStrokes.removeAll()
         imageData.removeAll()
         removeBackgroundImage()
+        collapseMenu()
     }
         
     
@@ -105,6 +135,7 @@ extension DrawingVM {
             redoStrokes.append(canvas.drawing.strokes.last!)
             canvas.drawing.strokes.removeLast()
         }
+        collapseMenu()
     }
     
     func redo(){
@@ -112,10 +143,9 @@ extension DrawingVM {
             canvas.drawing.strokes.append(redoStrokes.last!)
             redoStrokes.removeLast()
         }
+        collapseMenu()
         print("\(redoStrokes)")
     }
-    
-    
     
         
     func changePenColor(_ color:Color) {
@@ -158,7 +188,7 @@ extension DrawingVM {
     
     func showShareSheet(){
         
-        if let image = exportDrawingToUIimage() {
+        if let image = convertDrawingToUIimage() {
             let activityItems = [image]
             let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
             UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
@@ -167,14 +197,14 @@ extension DrawingVM {
     
     
     func saveImageOnCanvas(){
-        if let image = exportDrawingToUIimage() {
+        if let image = convertDrawingToUIimage() {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
             print("Save ok!")
             showSaveImageDoneAlert = true
         }
     }
     
-    private func exportDrawingToUIimage()->UIImage? {
+    private func convertDrawingToUIimage()->UIImage? {
         UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0)
         canvas.drawHierarchy(in: CGRect(origin: .zero, size: canvasSize), afterScreenUpdates: true)
         let image = UIGraphicsGetImageFromCurrentImageContext()
@@ -186,22 +216,30 @@ extension DrawingVM {
 
 
 class Coordinator: NSObject {
-  var canvas: Binding<PKCanvasView>
-  let onSaved: () -> Void
-
-  init(canvas: Binding<PKCanvasView>, onSaved: @escaping () -> Void) {
-    self.canvas = canvas
-    self.onSaved = onSaved
-  }
+    var canvas: Binding<PKCanvasView>
+    let onSaved: () -> Void
+    
+    init(canvas: Binding<PKCanvasView>, onSaved: @escaping () -> Void) {
+        self.canvas = canvas
+        self.onSaved = onSaved
+    }
+    
+    
+    
 }
 
 extension Coordinator: PKCanvasViewDelegate {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        print("scrollViewWillBeginDragging")
+    }
+    
     func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
         print("canvasViewDrawingDidChange")
         //print("Strokes ")
         if !canvas.drawing.bounds.isEmpty {
             onSaved()
         }
+        
     }
     
 }
