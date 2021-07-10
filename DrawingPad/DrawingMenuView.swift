@@ -157,10 +157,9 @@ struct DrawingMenuView : View {
                 .font(Font.system(size: drawingVM.converPenInnerFontSize(drawingVM.selectedSize)  ))
                 .foregroundColor(drawingVM.selectedColor)
             }
-            .padding()
-//            .clipShape(Circle())
             
         }
+        .padding(.horizontal)
         .animation(drawingVM.showPenMenu ? .spring(dampingFraction: 0.7) : .easeInOut)
         
         
@@ -174,7 +173,8 @@ struct DrawingMenuView : View {
             Image(systemName: "arrow.uturn.left")
         }
         .font(Font.system(size: Consts.iconFontSize))
-        .padding()
+        .padding(.horizontal)
+        
     }
     
     
@@ -185,7 +185,7 @@ struct DrawingMenuView : View {
             Image(systemName: "arrow.uturn.right")
         }
         .font(Font.system(size: Consts.iconFontSize))
-        .padding()
+        .padding(.horizontal)
     }
     
     var clean : some View {
@@ -196,7 +196,8 @@ struct DrawingMenuView : View {
             Image(systemName: "trash")
         }
         .font(Font.system(size: Consts.iconFontSize))
-        .padding()
+        .padding(.horizontal)
+
     }
     
     var locker : some View {
@@ -213,7 +214,7 @@ struct DrawingMenuView : View {
             }
         }
         .font(Font.system(size: Consts.iconFontSize))
-        .padding()
+        .padding(.horizontal)
     }
     
     
@@ -272,7 +273,7 @@ struct DrawingMenuView : View {
                 Image(systemName: "gearshape")
             }
             .font(Font.system(size: Consts.iconFontSize))
-            .padding()
+            .padding(.horizontal)
             
             
         }
@@ -287,8 +288,9 @@ struct DrawingMenuView : View {
             Color.orange
                 .frame(height: Consts.menuBackgroundHeight)
                 .opacity(0.8)
-                .shadow(color: .white, radius: 3, x: 3, y: 3)
+                .shadow(color: .black, radius: 3, x: 3, y: 3)
                 .cornerRadius(25)
+
             HStack {
                 penGroup
                 Spacer()
@@ -301,24 +303,16 @@ struct DrawingMenuView : View {
                         clean
                         Spacer()
                         settingGroup
-                        
                     }
                     .foregroundColor(Consts.menuIconColor)
                     .animation(.easeInOut)
                 }
                 
-                
-                
             }
 //            .onTapGesture {
 //                print("menu tapped")
 //            }
-//            .background(Color.orange)
-//            .shadow(color: .black, radius: 3, x: 3, y: 3)
             
-            //.padding()
-            
-            //.clipShape(Capsule())
         }
     }
     

@@ -152,7 +152,6 @@ extension DrawingVM {
     
         
     func changePenColor(_ color:Color) {
-//        selectedColor = color
         canvas.tool = PKInkingTool(.pen, color: UIColor(selectedColor), width: selectedSize)
     }
     
@@ -234,16 +233,35 @@ extension DrawingVM {
         return 0
     }
     
+    func claerRedoStrokes() {
+        print("redoStrokes.removeAll()")
+        redoStrokes.removeAll()
+    }
+    
 }
 
 
 class Coordinator: NSObject {
-    var canvas: Binding<PKCanvasView>
-    let onSaved: () -> Void
     
-    init(canvas: Binding<PKCanvasView>, onSaved: @escaping () -> Void) {
+    var canvas: Binding<PKCanvasView>
+    @Published var redoStrokes: [PKStroke]
+    
+    let onChanged: () -> Void
+    let onDrawingBegin: () -> Void
+    let onDrawingEnd: () -> Void
+    
+    init(canvas:  Binding<PKCanvasView>,
+         redoStrokes : [PKStroke],
+         onSaved: @escaping () -> Void,
+         onDrawingBegin: @escaping () -> Void,
+         onDrawingEnd: @escaping () -> Void
+    ) {
         self.canvas = canvas
-        self.onSaved = onSaved
+        self.redoStrokes = redoStrokes
+        self.onChanged = onSaved
+        self.onDrawingBegin = onDrawingBegin
+        self.onDrawingEnd = onDrawingEnd
+        
     }
     
     
@@ -251,17 +269,36 @@ class Coordinator: NSObject {
 }
 
 extension Coordinator: PKCanvasViewDelegate {
+    
+    
+    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         print("scrollViewWillBeginDragging")
+        
     }
     
+    
+    func canvasViewDidBeginUsingTool(_ canvasView: PKCanvasView) {
+        print("canvasViewDidBeginUsingTool")
+        print( redoStrokes.count )
+        onDrawingBegin()
+        
+    }
+    
+    func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) {
+        print("canvasViewDidEndUsingTool")
+    }
+    
+    func canvasViewDidFinishRendering(_ canvasView: PKCanvasView) {
+        print("canvasViewDidFinishRendering")
+    }
     
     
     func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
         print("canvasViewDrawingDidChange")
         //print("Strokes ")
         if !canvas.drawing.bounds.isEmpty {
-            onSaved()
+            onChanged()
         }
 
     }

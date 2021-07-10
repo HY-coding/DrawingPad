@@ -17,13 +17,13 @@ struct ContentView: View {
             GeometryReader { geometry in
                 VStack{
                     ZStack {
-
-                        CanvasView(canvas: $drawingVM.canvas)
+                        
+                        CanvasView(canvas: $drawingVM.canvas, redoStrokes: $drawingVM.redoStrokes )
                             .onTapGesture {
                                 print("onTapGesture")
                                 drawingVM.collapseMenu()
                             }
-                            
+                        
                     }
                 }
                 .preferredColorScheme(.light)
@@ -73,6 +73,7 @@ struct CanvasView : UIViewRepresentable {
     @EnvironmentObject var drawingVM : DrawingVM
     
     @Binding var canvas: PKCanvasView // to do: need to craete model for canvas View
+    @Binding var redoStrokes: [PKStroke]
     
     func makeUIView(context: Context) -> PKCanvasView {
         print("makeUIView")
@@ -100,14 +101,15 @@ struct CanvasView : UIViewRepresentable {
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         print("updateUIView")
         
-        for stroke in uiView.drawing.strokes {
-            print(stroke)
-        }
+        
+//        for stroke in uiView.drawing.strokes {
+//            print(stroke)
+//        }
         
     }
     
-    func onSaved() {
-        print("onSaved")
+    func onDrawingChanged() {
+        print("onDrawingChanged")
         
         #if(false)
         var newPoints = [PKStrokePoint]()
@@ -133,17 +135,22 @@ struct CanvasView : UIViewRepresentable {
         }
         #endif
         
+    }
+    
+    func onDrawingBegin() {
+        drawingVM.claerRedoStrokes()
+    }
+    
+    func onDrawingEnd() {
         
-        
-        //        canvas.drawing.strokes.forEach { point in
-        //            print(point.)
-        //        }
-        //
-        //print("\(canvas.drawing.strokes)")
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(canvas: $drawingVM.canvas, onSaved: onSaved)
+        Coordinator(canvas: $drawingVM.canvas,
+                    redoStrokes: redoStrokes,
+                    onSaved: onDrawingChanged,
+                    onDrawingBegin: onDrawingBegin,
+                    onDrawingEnd: onDrawingEnd)
         
     }
     
