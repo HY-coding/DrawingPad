@@ -15,8 +15,13 @@ struct DrawingMenuView : View {
     
     var penColorItems : some View {
         Group {
+
+            ColorPicker("color", selection: $drawingVM.selectedColor)
+                .labelsHidden()
+                .modifier(SideItemViewModifier(offset: -Consts.iconOffset*7))
+
             Button {
-                drawingVM.changePenColor(.black)
+                drawingVM.selectedColor = .black
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.black)
@@ -24,7 +29,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*6))
             
             Button {
-                drawingVM.changePenColor(.blue)
+                drawingVM.selectedColor = .blue
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.blue)
@@ -32,7 +37,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*5))
             
             Button {
-                drawingVM.changePenColor(.green)
+                drawingVM.selectedColor = .green
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.green)
@@ -40,7 +45,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*4))
             
             Button {
-                drawingVM.changePenColor(.yellow)
+                drawingVM.selectedColor = .yellow
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.yellow)
@@ -48,7 +53,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*3))
             
             Button {
-                drawingVM.changePenColor(.red)
+                drawingVM.selectedColor = .red
             } label : {
                 Image(systemName: "circle.fill" )
                     .foregroundColor(.red)
@@ -56,7 +61,7 @@ struct DrawingMenuView : View {
             .modifier(SideItemViewModifier(offset: -Consts.iconOffset*2))
             //clean button
             Button {
-                drawingVM.changePenColor(.white)
+                drawingVM.selectedColor = .white
             } label : {
                 Image(systemName: "circle" )
                     .foregroundColor(.black)
@@ -77,10 +82,10 @@ struct DrawingMenuView : View {
                         .foregroundColor(.gray)
                     Image(systemName: "circle.fill")
                         .foregroundColor(drawingVM.selectedColor)
-                        .font(Font.system(size: Consts.penSize1))
+                        .font(Font.system(size: Consts.iconPenInnerFontSize1))
                 }
             }
-            .modifier(BottomItemViewModifier(offset: Consts.iconOffset*3))
+            .modifier(BottomItemViewModifier(offset: Consts.iconOffset*1))
             
             Button {
                 // pen size 2
@@ -92,7 +97,7 @@ struct DrawingMenuView : View {
                         .foregroundColor(.gray)
                     Image(systemName: "circle.fill")
                         .foregroundColor(drawingVM.selectedColor)
-                        .font(Font.system(size: Consts.penSize2))
+                        .font(Font.system(size: Consts.iconPenInnerFontSize2))
                 }
             }.modifier(BottomItemViewModifier(offset: Consts.iconOffset*2))
             
@@ -107,9 +112,9 @@ struct DrawingMenuView : View {
                         .foregroundColor(.gray)
                     Image(systemName: "circle.fill")
                         .foregroundColor(drawingVM.selectedColor)
-                        .font(Font.system(size: Consts.penSize3))
+                        .font(Font.system(size: Consts.iconPenInnerFontSize3))
                 }
-            }.modifier(BottomItemViewModifier(offset: Consts.iconOffset*1))
+            }.modifier(BottomItemViewModifier(offset: Consts.iconOffset*3))
             
         }
     }
@@ -117,9 +122,14 @@ struct DrawingMenuView : View {
     var penGroup : some View {
         ZStack {
             
-            if drawingVM.showPenMenu {
-                penColorItems
-                penSizeItems
+            Group{
+                if drawingVM.showPenMenu {
+                    
+                    penColorItems
+                    penSizeItems
+                    
+                    
+                }
             }
             
             
@@ -136,13 +146,20 @@ struct DrawingMenuView : View {
                         .font(Font.system(size: Consts.iconFontSize))
                     
                     Image(systemName: "circle.fill")
-                        .font(Font.system(size: drawingVM.selectedSize))
-                        .foregroundColor(drawingVM.selectedColor)
-                    
+                        
                 }
+                .transition(
+                    AnyTransition.asymmetric(
+                        insertion:.opacity,
+                        removal:.opacity
+                    )
+                )
+                .font(Font.system(size: drawingVM.converPenInnerFontSize(drawingVM.selectedSize)  ))
+                .foregroundColor(drawingVM.selectedColor)
             }
-            .clipShape(Circle())
             .padding()
+//            .clipShape(Circle())
+            
         }
         .animation(drawingVM.showPenMenu ? .spring(dampingFraction: 0.7) : .easeInOut)
         
@@ -152,7 +169,6 @@ struct DrawingMenuView : View {
     
     var undo : some View {
         Button {
-            drawingVM.drawingEvent = .undo
             drawingVM.undo()
         } label : {
             Image(systemName: "arrow.uturn.left")
@@ -164,7 +180,6 @@ struct DrawingMenuView : View {
     
     var redo : some View {
         Button {
-            drawingVM.drawingEvent = .redo
             drawingVM.redo()
         } label : {
             Image(systemName: "arrow.uturn.right")
@@ -176,7 +191,6 @@ struct DrawingMenuView : View {
     var clean : some View {
         Button {
             print("trash")
-            drawingVM.drawingEvent = .clean
             drawingVM.cleanDrawing()
         } label : {
             Image(systemName: "trash")
@@ -213,8 +227,8 @@ struct DrawingMenuView : View {
                 }
                 .modifier(SideItemViewModifier(offset: -Consts.iconOffset*5))
                 
+                
                 Button {
-                    drawingVM.drawingEvent = .share
                     drawingVM.showShareSheet()
                 } label : {
                     Image(systemName: "square.and.arrow.up")
@@ -222,7 +236,6 @@ struct DrawingMenuView : View {
                 .modifier(SideItemViewModifier(offset: -Consts.iconOffset*4))
                 
                 Button {
-                    drawingVM.drawingEvent = .saveToAlbum
                     drawingVM.saveImageOnCanvas()
                 } label : {
                     Image(systemName: "arrow.down.to.line")
@@ -235,6 +248,7 @@ struct DrawingMenuView : View {
                 } label : {
                     Image(systemName: "camera")
                 }
+                
                 .modifier(SideItemViewModifier(offset: -Consts.iconOffset*2))
                 
                 Button {
@@ -258,47 +272,54 @@ struct DrawingMenuView : View {
                 Image(systemName: "gearshape")
             }
             .font(Font.system(size: Consts.iconFontSize))
-            .clipShape(Rectangle())
             .padding()
             
             
         }
+        .foregroundColor(Consts.menuIconColor)
         .animation(drawingVM.showSettingMenu ? .spring(dampingFraction: 0.7) : .easeOut)
         
     }
     
     
     var body: some View {
-        HStack {
-            
-            penGroup
-            Spacer()
-            if !drawingVM.showPenMenu {
-                Group {
-                    undo
-                    Spacer()
-                    redo
-                    Spacer()
-                    clean
-                    Spacer()
-                    //locker
-                    //Spacer()
-                    settingGroup
+        ZStack {
+            Color.orange
+                .frame(height: Consts.menuBackgroundHeight)
+                .opacity(0.8)
+                .shadow(color: .white, radius: 3, x: 3, y: 3)
+                .cornerRadius(25)
+            HStack {
+                penGroup
+                Spacer()
+                if !drawingVM.showPenMenu {
+                    Group {
+                        undo
+                        Spacer()
+                        redo
+                        Spacer()
+                        clean
+                        Spacer()
+                        settingGroup
+                        
+                    }
+                    .foregroundColor(Consts.menuIconColor)
+                    .animation(.easeInOut)
                 }
-                .animation(.easeInOut)
+                
+                
+                
             }
+//            .onTapGesture {
+//                print("menu tapped")
+//            }
+//            .background(Color.orange)
+//            .shadow(color: .black, radius: 3, x: 3, y: 3)
             
+            //.padding()
+            
+            //.clipShape(Capsule())
         }
-        .onTapGesture {
-            print("menu tapped")
-        }
-        
-        //.background(Color.purple)
-        //.shadow(color: .black, radius: 3, x: 3, y: 3)
-        //        .cornerRadius(25)
-        .padding()
-        
-        //.clipShape(Capsule())
     }
     
 }
@@ -309,6 +330,9 @@ struct SideItemViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.system(size: Consts.iconFontSize))
+            .frame(width: Consts.iconSizeWidth, height: Consts.iconSizeHeight)
+            .background( Color.white.opacity(0.5) )
+            .cornerRadius(8)
             .offset(y: offset )
             .transition(
                 AnyTransition.asymmetric(

@@ -10,15 +10,25 @@ import PencilKit
 
 
 public struct Consts{
-    static let iconSizeWidth:CGFloat = 60
-    static let iconSizeHeight:CGFloat = 60
+    
+    
+    static let iconSizeWidth:CGFloat = 32
+    static let iconSizeHeight:CGFloat = 32
     static let iconOffset: CGFloat = 60
     static let iconFontSize: CGFloat = 24
+    static let iconSize: CGSize = CGSize(width: 24, height: 24)
     
-    static let penSize1: CGFloat = 16
-    static let penSize2: CGFloat = 12
-    static let penSize3: CGFloat = 8
-    static let defaultColor  = Color.black
+    static let iconPenInnerFontSize1 : CGFloat = 10
+    static let iconPenInnerFontSize2 : CGFloat = 16
+    static let iconPenInnerFontSize3 : CGFloat = 22
+    
+    static let menuBackgroundHeight: CGFloat = 48
+    static let menuIconColor = Color.black
+    
+    static let penSize1: CGFloat = 1
+    static let penSize2: CGFloat = 5
+    static let penSize3: CGFloat = 10
+    static let defaultColor  = Color.blue
     
     static let backgroundImageTag = 100
 }
@@ -28,17 +38,9 @@ class DrawingVM: ObservableObject {
     
     enum Event: Equatable {
         case idle
-        case colorChanged
-        case penSizeChanged
-        case clean
-        case undo
-        case redo
         case camera
         case photo
-        case saveToAlbum
-        case share
-        case lock
-        case unlock
+        case showColorPicker
     }
 
     
@@ -85,6 +87,7 @@ class DrawingVM: ObservableObject {
     
     @Published var selectedColor = Consts.defaultColor {
         didSet {
+            changePenColor(selectedColor)
             collapseMenu()
         }
     }
@@ -149,9 +152,10 @@ extension DrawingVM {
     
         
     func changePenColor(_ color:Color) {
-        selectedColor = color
+//        selectedColor = color
         canvas.tool = PKInkingTool(.pen, color: UIColor(selectedColor), width: selectedSize)
     }
+    
     func changePenWidth(_ width:CGFloat){
         selectedSize = width
         canvas.tool = PKInkingTool(.pen, color: UIColor(selectedColor), width: selectedSize)
@@ -212,6 +216,24 @@ extension DrawingVM {
         return image
     }
     
+    
+    //iconPenInnerFontSize2
+    func converPenInnerFontSize(_ penSize: CGFloat) -> CGFloat {
+        if penSize == Consts.penSize1 {
+            return Consts.iconPenInnerFontSize1
+        }
+        
+        if penSize == Consts.penSize2 {
+            return Consts.iconPenInnerFontSize2
+        }
+        
+        if penSize == Consts.penSize3 {
+            return Consts.iconPenInnerFontSize3
+        }
+        
+        return 0
+    }
+    
 }
 
 
@@ -233,13 +255,15 @@ extension Coordinator: PKCanvasViewDelegate {
         print("scrollViewWillBeginDragging")
     }
     
+    
+    
     func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
         print("canvasViewDrawingDidChange")
         //print("Strokes ")
         if !canvas.drawing.bounds.isEmpty {
             onSaved()
         }
-        
+
     }
     
 }
