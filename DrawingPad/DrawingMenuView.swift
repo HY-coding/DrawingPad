@@ -124,13 +124,10 @@ struct DrawingMenuView : View {
             
             Group{
                 if drawingVM.showPenMenu {
-                    
                     penColorItems
                     penSizeItems
-                    
-                    
                 }
-            }
+            }.animation(drawingVM.showPenMenu ? .spring(dampingFraction: 0.7) : .easeInOut)
             
             
             Button {
@@ -148,19 +145,15 @@ struct DrawingMenuView : View {
                     Image(systemName: "circle.fill")
                         
                 }
-                .transition(
-                    AnyTransition.asymmetric(
-                        insertion:.opacity,
-                        removal:.opacity
-                    )
-                )
-                .font(Font.system(size: drawingVM.converPenInnerFontSize(drawingVM.selectedSize)  ))
+                .font(Font.system(size: drawingVM.convertPenInnerFontSize(drawingVM.selectedSize)  ))
                 .foregroundColor(drawingVM.selectedColor)
             }
+            .font(.system(size: Consts.iconFontSize))
+            .frame(width: Consts.iconSizeWidth, height: Consts.iconSizeHeight)
             
         }
         .padding(.horizontal)
-        .animation(drawingVM.showPenMenu ? .spring(dampingFraction: 0.7) : .easeInOut)
+        
         
         
     }
@@ -222,44 +215,46 @@ struct DrawingMenuView : View {
     var settingGroup : some View {
         ZStack {
             if drawingVM.showSettingMenu {
-                
-                Button { } label : {
-                    Image(systemName: "info.circle")
+                Group {
+                    Button { } label : {
+                        Image(systemName: "info.circle")
+                    }
+                    .modifier(SideItemViewModifier(offset: -Consts.iconOffset*5))
+                    
+                    
+                    Button {
+                        drawingVM.showShareSheet()
+                    } label : {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .modifier(SideItemViewModifier(offset: -Consts.iconOffset*4))
+                    
+                    Button {
+                        drawingVM.saveImageOnCanvas()
+                    } label : {
+                        Image(systemName: "arrow.down.to.line")
+                    }
+                    .modifier(SideItemViewModifier(offset: -Consts.iconOffset*3))
+                    
+                    Button {
+                        drawingVM.drawingEvent = .camera
+                        drawingVM.showBackgroundImagePickerSheet = true
+                    } label : {
+                        Image(systemName: "camera")
+                    }
+                    
+                    .modifier(SideItemViewModifier(offset: -Consts.iconOffset*2))
+                    
+                    Button {
+                        drawingVM.drawingEvent = .photo
+                        drawingVM.showBackgroundImagePickerSheet = true
+                    } label : {
+                        Image(systemName: "photo")
+                    }
+                    .modifier(SideItemViewModifier(offset: -Consts.iconOffset))
+                    
                 }
-                .modifier(SideItemViewModifier(offset: -Consts.iconOffset*5))
-                
-                
-                Button {
-                    drawingVM.showShareSheet()
-                } label : {
-                    Image(systemName: "square.and.arrow.up")
-                }
-                .modifier(SideItemViewModifier(offset: -Consts.iconOffset*4))
-                
-                Button {
-                    drawingVM.saveImageOnCanvas()
-                } label : {
-                    Image(systemName: "arrow.down.to.line")
-                }
-                .modifier(SideItemViewModifier(offset: -Consts.iconOffset*3))
-                
-                Button {
-                    drawingVM.drawingEvent = .camera
-                    drawingVM.showBackgroundImagePickerSheet = true
-                } label : {
-                    Image(systemName: "camera")
-                }
-                
-                .modifier(SideItemViewModifier(offset: -Consts.iconOffset*2))
-                
-                Button {
-                    drawingVM.drawingEvent = .photo
-                    drawingVM.showBackgroundImagePickerSheet = true
-                } label : {
-                    Image(systemName: "photo")
-                }
-                .modifier(SideItemViewModifier(offset: -Consts.iconOffset))
-                
+                .animation(drawingVM.showSettingMenu ? .spring(dampingFraction: 0.7) : .easeOut)
             }
             
             Button {
@@ -278,18 +273,19 @@ struct DrawingMenuView : View {
             
         }
         .foregroundColor(Consts.menuIconColor)
-        .animation(drawingVM.showSettingMenu ? .spring(dampingFraction: 0.7) : .easeOut)
+        
         
     }
     
     
     var body: some View {
         ZStack {
-            Color.orange
+            
+            Color(red: 32/255, green: 110/255, blue: 140/255)
                 .frame(height: Consts.menuBackgroundHeight)
                 .opacity(0.8)
-                .shadow(color: .black, radius: 3, x: 3, y: 3)
-                .cornerRadius(25)
+                //.shadow(color: .black, radius: 3, x: 3, y: 3)
+                //.cornerRadius(25)
 
             HStack {
                 penGroup
@@ -305,10 +301,11 @@ struct DrawingMenuView : View {
                         settingGroup
                     }
                     .foregroundColor(Consts.menuIconColor)
-                    .animation(.easeInOut)
+                    //.animation(.easeInOut)
                 }
                 
             }
+//            .frame(height: Consts.menuBackgroundHeight)
 //            .onTapGesture {
 //                print("menu tapped")
 //            }

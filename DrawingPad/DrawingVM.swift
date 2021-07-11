@@ -28,7 +28,7 @@ public struct Consts{
     static let penSize1: CGFloat = 1
     static let penSize2: CGFloat = 5
     static let penSize3: CGFloat = 10
-    static let defaultColor  = Color.blue
+    static let defaultColor  = Color.black
     
     static let backgroundImageTag = 100
 }
@@ -48,7 +48,7 @@ class DrawingVM: ObservableObject {
     @Published var drawingEvent:Event = .idle
     @Published var redoStrokes = [PKStroke]()
     @Published var imageData: Data = Data(count: 0)
-    @Published var canvasSize = CGSize.zero
+    
     
     
     @Published var showPenMenu = false {
@@ -105,9 +105,11 @@ class DrawingVM: ObservableObject {
     }
     
     func collapseMenu() {
-        self.showPenMenu = false
-        self.showSettingMenu = false
-        self.canvas.isUserInteractionEnabled = true
+        withAnimation {
+            self.showPenMenu = false
+            self.showSettingMenu = false
+            self.canvas.isUserInteractionEnabled = true
+        }
     }
     
     
@@ -174,7 +176,7 @@ extension DrawingVM {
             if let image = UIImage(data: imageData) {
                 
                 let imageView = UIImageView(image: image)
-                imageView.frame = CGRect(x: 0, y: 0, width: canvasSize.width, height: canvasSize.height)
+                imageView.frame = CGRect(x: 0, y: 0, width: canvas.bounds.size.width, height: canvas.bounds.size.height)
                 imageView.contentMode   = .scaleAspectFit
                 imageView.clipsToBounds = true
                 imageView.tag = Consts.backgroundImageTag
@@ -191,7 +193,8 @@ extension DrawingVM {
     
     func showShareSheet(){
         
-        if let image = convertDrawingToUIimage() {
+        if let image = convertCanvasToUIimage() {
+            print("showShareSheet")
             let activityItems = [image]
             let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
             UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
@@ -200,16 +203,18 @@ extension DrawingVM {
     
     
     func saveImageOnCanvas(){
-        if let image = convertDrawingToUIimage() {
+        if let image = convertCanvasToUIimage() {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
             print("Save ok!")
             showSaveImageDoneAlert = true
         }
     }
     
-    private func convertDrawingToUIimage()->UIImage? {
-        UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0)
-        canvas.drawHierarchy(in: CGRect(origin: .zero, size: canvasSize), afterScreenUpdates: true)
+    private func convertCanvasToUIimage()->UIImage? {
+        
+        print("convertDrawingToUIimage")
+        UIGraphicsBeginImageContextWithOptions(canvas.bounds.size, false, 0)
+        canvas.drawHierarchy(in: CGRect(origin: .zero, size: canvas.bounds.size), afterScreenUpdates: true)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image
@@ -217,7 +222,7 @@ extension DrawingVM {
     
     
     //iconPenInnerFontSize2
-    func converPenInnerFontSize(_ penSize: CGFloat) -> CGFloat {
+    func convertPenInnerFontSize(_ penSize: CGFloat) -> CGFloat {
         if penSize == Consts.penSize1 {
             return Consts.iconPenInnerFontSize1
         }

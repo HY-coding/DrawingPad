@@ -12,30 +12,19 @@ struct ContentView: View {
     @EnvironmentObject var drawingVM : DrawingVM
     
     var body: some View {
-        
-        VStack {
-            GeometryReader { geometry in
-                VStack{
-                    ZStack {
-                        
-                        CanvasView(canvas: $drawingVM.canvas, redoStrokes: $drawingVM.redoStrokes )
-                            .onTapGesture {
-                                print("onTapGesture")
-                                drawingVM.collapseMenu()
-                            }
-                        
+        Group {
+            VStack{
+                CanvasView(canvas: $drawingVM.canvas, redoStrokes: $drawingVM.redoStrokes )
+                    .onTapGesture {
+                        print("onTapGesture")
+                        print(drawingVM.canvas.bounds.size)
+                        drawingVM.collapseMenu()
                     }
-                }
-                .preferredColorScheme(.light)
-                .onAppear(){
-                    print("onAppear")
-                    drawingVM.canvasSize = geometry.size
-                }
+                Spacer()
+                DrawingMenuView()
             }
-            Spacer()
-            DrawingMenuView()
-                .preferredColorScheme(.light)
         }
+        .preferredColorScheme(.light)
         .onReceive(drawingVM.$drawingEvent) { event in
             print("rx event \(event)")
             switch event {
@@ -55,7 +44,7 @@ struct ContentView: View {
             
             case .showColorPicker :
                 ColorPicker("Pick Color", selection: $drawingVM.selectedColor)
-            
+                
             default: EmptyView()
             }
         }
@@ -77,31 +66,24 @@ struct CanvasView : UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         print("makeUIView")
-//        canvas.overrideUserInterfaceStyle = .dark
+
         canvas.drawingPolicy = .anyInput
         
         canvas.tool = PKInkingTool(.pen, color: UIColor(drawingVM.selectedColor), width: drawingVM.selectedSize)
-//        canvas.tool = PKInkingTool(ink: , width: 2)
-//        canvas.tool = PKInkingTool(.pen, color: UIColor(drawingVM.selectedColor))
+        canvas.isOpaque =  false //false
         canvas.backgroundColor = .clear
-        canvas.isOpaque = false
         canvas.delegate = context.coordinator
-        //canvas.isDirectionalLockEnabled = false
-        //canvas.isScrollEnabled = true
         
-//        canvas.drawingGestureRecognizer.isEnabled = false
         //toolPicker.setVisible(true, forFirstResponder: canvas)
         //toolPicker.addObserver(canvas)
-        canvas.becomeFirstResponder()
+//        canvas.becomeFirstResponder()
         
         return canvas
     }
     
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
-        print("updateUIView")
-        
-        
+        //print("updateUIView")
 //        for stroke in uiView.drawing.strokes {
 //            print(stroke)
 //        }
@@ -159,8 +141,9 @@ struct CanvasView : UIViewRepresentable {
 
 
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .environmentObject(DrawingVM())
+    }
+}
